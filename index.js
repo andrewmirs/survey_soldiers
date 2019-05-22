@@ -10,9 +10,25 @@ passport.use(
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback'
-    }, (accessToken) => {
-        console.log(accessToken);
+    }, (accessToken, refreshToken, profile, done) => {
+        console.log('access token', accessToken);
+        console.log('refresh token', refreshToken);
+        console.log('profile', profile);
     })
+);
+
+// Ask user if they grant permission through Google
+app.get(
+    '/auth/google', 
+    passport.authenticate('google', {
+        scope: ['profile', 'email']
+    })
+);
+
+// Ask google for details about User using 'code' from callback
+app.get(
+    '/auth/google/callback', 
+    passport.authenticate('google')
 );
 
 const PORT = process.env.PORT || 5000;
